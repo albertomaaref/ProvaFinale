@@ -7,7 +7,7 @@ import com.loopj.android.http.*;
 
 public final class FireBaseConnection {
 
-    private static final String BASE_URL = "https://comunities-bc5e8.firebaseio.com/";
+    private static final String BASE_URL = "https://provafinale-5bc57.firebaseio.com/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
