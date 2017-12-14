@@ -32,12 +32,17 @@ public class RootActivity extends AppCompatActivity {
         else if (tipoUtenteAttivo.toLowerCase().equals("clienti")){
             // vado alla lista di visualizzazione dei corrieri disonibili
             Toast.makeText(getApplicationContext(),"vado dalla lista dei corrieri",Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this,ListaCorrieriActivity.class);
+            startActivity(i);
 
         }
 
         else if (tipoUtenteAttivo.toLowerCase().equals("corrieri")){
             // vao alla lista dei pacchi
             Toast.makeText(getApplicationContext(),"vado dalla lista dei pacchi",Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this,ListaPacchiActivity.class);
+            startActivity(i);
+
         }
 
         finish();

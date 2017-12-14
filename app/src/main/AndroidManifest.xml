@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".CreateAccountActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".ListaCorrieriActivity"></activity>
+        <activity android:name=".ListaCorrieriActivity" />
+        <activity android:name=".ListaPacchiActivity"></activity>
     </application>
 
 </manifest>

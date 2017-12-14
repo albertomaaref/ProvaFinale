@@ -105,7 +105,16 @@ public class LoginActivity extends AppCompatActivity implements TaskCompletion{
                 editor.putString("utenteAttivo",userLogin.getText().toString());
                 editor.putString("tipoUtenteAttivo",spinnerLogin.getSelectedItem().toString());
                 editor.commit();
-                Toast.makeText(getApplicationContext(),"LOGIN EFFETTUATO",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"LOGIN EFFETTUATO",Toast.LENGTH_SHORT).show();
+                if (spinnerLogin.getSelectedItem().toString().toLowerCase().equals("clienti")){
+                    Intent i = new Intent(this, ListaCorrieriActivity.class);
+                    startActivity(i);
+                }
+                else if (spinnerLogin.getSelectedItem().toString().toLowerCase().equals("corrieri")){
+                    Intent i = new Intent(this,ListaPacchiActivity.class);
+                    startActivity(i);
+                }
+
 
 
             }

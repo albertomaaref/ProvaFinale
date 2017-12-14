@@ -1,6 +1,8 @@
 package it.dsgroup.provafinale;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,66 +12,71 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.ArrayList;
+import java.util.prefs.PreferenceChangeEvent;
 
 import cz.msebera.android.httpclient.Header;
-import it.dsgroup.provafinale.adapters.CorriereAdapter;
-import it.dsgroup.provafinale.models.Corriere;
+import it.dsgroup.provafinale.adapters.PaccoAdapter;
+import it.dsgroup.provafinale.models.Pacco;
 import it.dsgroup.provafinale.utilities.FireBaseConnection;
 import it.dsgroup.provafinale.utilities.InternalStorage;
 import it.dsgroup.provafinale.utilities.JasonParser;
 import it.dsgroup.provafinale.utilities.TaskCompletion;
 
-public class ListaCorrieriActivity extends AppCompatActivity implements TaskCompletion{
+public class ListaPacchiActivity extends AppCompatActivity implements TaskCompletion{
 
-    private RecyclerView recyclerCorriere;
+    private RecyclerView recyclerPacco;
     private LinearLayoutManager lm;
-    private CorriereAdapter corriereAdapter;
-    private ArrayList<Corriere> listaCorrieri;
-    private TaskCompletion delegation;
     private ProgressDialog pd;
+    private TaskCompletion delegation;
+    private ArrayList<Pacco> listaPacchi;
+    private PaccoAdapter paccoAdapter;
+    private SharedPreferences prefs;
+    private String utenteAttivo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_corrieri);
+        setContentView(R.layout.activity_lista_pacchi);
 
-        recyclerCorriere = findViewById(R.id.recyclerCorriere);
+        recyclerPacco = findViewById(R.id.recyclerPacchi);
         lm = new LinearLayoutManager(this);
-        listaCorrieri= (ArrayList<Corriere>) InternalStorage.readObject(getApplicationContext(),"listaCorrieri");
+        listaPacchi = (ArrayList<Pacco>) InternalStorage.readObject(getApplicationContext(),"listaPacchi");
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        utenteAttivo = (String) prefs.getString("utenteAttivo","");
         delegation = this;
 
-        if (listaCorrieri== null){
-            // fare la chiamata rest per prendere la lista dei corrieri
-            restCallCorrieri("users/corrieri.json", delegation);
-            InternalStorage.writeObject(this,"listaCorrieri",listaCorrieri);
+
+        if (listaPacchi == null){
+            // rest calla per i pacchi
+            restCallPacchi(delegation,"users/corrieri/"+utenteAttivo+".json");
+
         }
         else {
-            setRecyclerCorriere();
+            setRecyclerPacco();
         }
-
-
     }
-
-    public void setRecyclerCorriere (){
-        corriereAdapter = new CorriereAdapter(listaCorrieri,this);
-        recyclerCorriere.setLayoutManager(lm);
-        recyclerCorriere.setAdapter(corriereAdapter);
-    }
-
 
     @Override
     public void taskToDo(String string) {
         pd.dismiss();
         pd.cancel();
-        if (string.equals("erroe")){
+        if (string.equals("error")){
             Toast.makeText(getApplicationContext(),"Errore nel caricamento",Toast.LENGTH_SHORT).show();
         }
         else if (string.equals("success")){
-            setRecyclerCorriere();
+            setRecyclerPacco();
         }
     }
 
-    public void restCallCorrieri (final String url, final TaskCompletion delegation){
+    public void setRecyclerPacco (){
+        paccoAdapter = new PaccoAdapter(listaPacchi,this);
+        recyclerPacco.setLayoutManager(lm);
+        recyclerPacco.setAdapter(paccoAdapter);
+
+    }
+
+    public void restCallPacchi (final TaskCompletion delegation, String url){
         pd = new ProgressDialog(this);
         pd.show();
         FireBaseConnection.get(url, null, new AsyncHttpResponseHandler() {
@@ -80,15 +87,14 @@ public class ListaCorrieriActivity extends AppCompatActivity implements TaskComp
                     delegation.taskToDo("error");
                 }
                 else {
-                    listaCorrieri = JasonParser.getCorrieri(s);
+                    listaPacchi = (ArrayList<Pacco>) JasonParser.getPacchi(s);
                     delegation.taskToDo("success");
-
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                delegation.taskToDo("errore");
+                    delegation.taskToDo("error");
             }
         });
     }
