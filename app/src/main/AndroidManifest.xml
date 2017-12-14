@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateAccountActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".ListaCorrieriActivity"></activity>
     </application>
 
 </manifest>
