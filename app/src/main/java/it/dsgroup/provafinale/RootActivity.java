@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import it.dsgroup.provafinale.models.Cliente;
 import it.dsgroup.provafinale.models.Corriere;
+import it.dsgroup.provafinale.services.PushNotification;
 
 public class RootActivity extends AppCompatActivity {
 
@@ -39,6 +40,8 @@ public class RootActivity extends AppCompatActivity {
             cliente = new Cliente();
             cliente.setUserCliente(utenteAttivo);
             Intent i = new Intent(this,ListaCorrieriActivity.class);
+            Intent intentPush= new Intent(RootActivity.this, PushNotification.class);
+            startService(intentPush);
             startActivity(i);
 
         }

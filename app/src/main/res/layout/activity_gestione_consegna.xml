@@ -6,27 +6,14 @@
     android:layout_height="match_parent"
     tools:context="it.dsgroup.provafinale.GestioneConsegnaActivity">
 
-    <TextView
-        android:id="@+id/tPacco"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:text="TextView"
-        android:textColor="@android:color/background_dark"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
     <Spinner
         android:id="@+id/spinnerGestione"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/tPacco"
-        android:layout_marginEnd="12dp"
-        android:layout_marginTop="79dp"
-        android:entries="@array/stati"/>
+        android:layout_above="@+id/bApplica"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="119dp"
+        android:entries="@array/stati" />
 
     <Button
         android:id="@+id/bApplica"
@@ -36,4 +23,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="134dp"
         android:text="APPLICA MODIFICHE" />
+
+    <Button
+        android:id="@+id/bDettaglio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="Dettaglio Pacco" />
 </RelativeLayout>

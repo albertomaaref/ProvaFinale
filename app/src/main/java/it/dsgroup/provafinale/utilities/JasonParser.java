@@ -111,6 +111,7 @@ public final class JasonParser {
                 if (key.toLowerCase().equals("idpacco")) pacco.setIdPacco(object.getString(key));
                 if (key.toLowerCase().equals("indcons")) pacco.setIndCons(object.getString(key));
                 if (key.toLowerCase().equals("stato")) pacco.setStato(object.getString(key));
+                if (key.toLowerCase().equals("corriere")) pacco.setCorriere(object.getString(key));
                 if (key.toLowerCase().equals("dataconsegna")){
 
                         String data="" ;

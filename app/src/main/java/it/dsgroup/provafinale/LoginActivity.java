@@ -60,6 +60,14 @@ public class LoginActivity extends AppCompatActivity implements TaskCompletion{
             }
         });
 
+        bRegistration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this,CreateAccountActivity.class);
+                startActivity(i);
+            }
+        });
+
 
     }
 

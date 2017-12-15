@@ -31,6 +31,7 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
     private FirebaseDatabase database;
     private ProgressDialog pd;
     private Pacco paccoDaconsegnare;
+    private Button dettaglioPacco;
 
 
 
@@ -43,6 +44,7 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
         Intent i = getIntent();
         idPacco = i.getStringExtra("idPacco");
         spinnerStato = findViewById(R.id.spinnerGestione);
+        dettaglioPacco = findViewById(R.id.bDettaglio);
         bApplica = findViewById(R.id.bApplica);
         delegation = this;
         database = FirebaseDatabase.getInstance();
@@ -50,6 +52,7 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
 
         restCallforPacco(delegation,"users/pacchi/"+idPacco+".json");
         bApplica.setOnClickListener(temporary4);
+        dettaglioPacco.setOnClickListener(temporary5);
 
 
 
@@ -119,5 +122,15 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
         // metto il pacco in local storage per poterlo riprendere finche non ho finito la consegna
         InternalStorage.writeObject(getApplicationContext(),"paccoInConsegna",paccoDaconsegnare);
     }
+
+    View.OnClickListener temporary5 = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(GestioneConsegnaActivity.this,DettaglioPaccoActivity.class);
+            i.putExtra("idPacco",paccoDaconsegnare.getIdPacco());
+            startActivity(i);
+
+        }
+    };
 
 }

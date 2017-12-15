@@ -80,6 +80,7 @@ public class InsertPaccoActivity extends AppCompatActivity {
                 pacco.setDimensione(dimensione.getText().toString());
                 pacco.setIndCons(partenza.getText().toString());
                 pacco.setDestinatario(utenteAttivo);
+                pacco.setCorriere(corriereCommissionato);
 
 
                 insertPaccoInDB(pacco);

@@ -16,6 +16,17 @@ public class Pacco implements Serializable{
     private Date dataConsegna;
     private String indDep;
     private String indCons;
+    private String corriere;
+
+    public String getCorriere() {
+        return corriere;
+    }
+
+    public void setCorriere(String corriere) {
+        this.corriere = corriere;
+    }
+
+
 
     public String getDimensione() {
         return dimensione;

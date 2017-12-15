@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import it.dsgroup.provafinale.DettaglioPaccoActivity;
 import it.dsgroup.provafinale.GestioneConsegnaActivity;
 import it.dsgroup.provafinale.R;
 import it.dsgroup.provafinale.models.Pacco;
+import it.dsgroup.provafinale.utilities.InternalStorage;
 
 /**
  * Created by utente9.academy on 14/12/2017.
@@ -49,6 +51,10 @@ public class PaccoAdapter extends RecyclerView.Adapter<PaccoAdapter.ClienteHolde
             public void onClick(View v) {
                 if (tipoUtente.toLowerCase().equals("clienti")){
                     // vado a visualizzare i dettagli del pacco
+                    Intent i = new Intent(context, DettaglioPaccoActivity.class);
+                    i.putExtra("idPacco",holder.tPacco.getText().toString());
+                    context.startActivity(i);
+
                 }
                 else if (tipoUtente.toLowerCase().equals("corrieri")){
                     Intent i = new Intent(context, GestioneConsegnaActivity.class);

@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import it.dsgroup.provafinale.ListaPacchiActivity;
+import it.dsgroup.provafinale.LoginActivity;
 import it.dsgroup.provafinale.R;
 import it.dsgroup.provafinale.models.Pacco;
 import it.dsgroup.provafinale.utilities.InternalStorage;
@@ -51,9 +52,13 @@ public class PushNotification extends Service {
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String corriereCommissionato = preferences.getString("corriereCommissionato","");
         refInsert = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/corrieri/"+corriereCommissionato);
+        if (paccoInConsegna!=null){
+
+        }
 
         paccoInConsegna = (Pacco) InternalStorage.readObject(getApplicationContext(),"paccoInConsegna");
-        refStato = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/clienti/"+paccoInConsegna.getDestinatario());
+
+
 
 
 
@@ -112,7 +117,11 @@ public class PushNotification extends Service {
         };
 
 
-        refStato.addChildEventListener(child2);
+        if (paccoInConsegna!=null){
+            refStato = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/clienti/"+paccoInConsegna.getDestinatario());
+            refStato.addChildEventListener(child2);
+        }
+
         refInsert.addChildEventListener(child1);
     }
 
@@ -127,7 +136,7 @@ public class PushNotification extends Service {
     }
 
     public void pushValidation(String chiave){
-        Intent i = new Intent(this, ListaPacchiActivity.class);
+        Intent i = new Intent(this, LoginActivity.class);
         sendNotificaton(i,"",chiave);
     }
 
