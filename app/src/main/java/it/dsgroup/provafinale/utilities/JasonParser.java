@@ -42,14 +42,15 @@ public final class JasonParser {
         try {
             JSONObject object = new JSONObject(string);
             Iterator keys = object.keys();
-            Corriere corriere = new Corriere();
+
             while (keys.hasNext()){
+                Corriere corriere = new Corriere();
                 String key = (String) keys.next();
                 corriere.setUserCorriere(key);
-
+                lista.add(corriere);
             }
 
-            lista.add(corriere);
+
         }
 
         catch (JSONException e) {
@@ -68,8 +69,9 @@ public final class JasonParser {
                 String key = (String) keys.next();
                 JSONObject oggetto =  object.getJSONObject(key);
                 Iterator chiavi = oggetto.keys();
-                Pacco pacco = new Pacco();
+
                 while (chiavi.hasNext()){
+                    Pacco pacco = new Pacco();
                     String chiave = (String) chiavi.next();
                     JSONObject objet = oggetto.getJSONObject(chiave);
                     Iterator clefs = objet.keys();
@@ -77,10 +79,11 @@ public final class JasonParser {
                         String clef = (String) clefs.next();
                         if (clef.toLowerCase().equals("id")){
                             pacco.setIdPacco(objet.getString(clef).toString());
+                            listPacchi.add(pacco);
                         }
                     }
                 }
-                listPacchi.add(pacco);
+
             }
         }
 

@@ -1,14 +1,18 @@
 package it.dsgroup.provafinale.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import it.dsgroup.provafinale.InsertPaccoActivity;
 import it.dsgroup.provafinale.R;
 import it.dsgroup.provafinale.models.Corriere;
 
@@ -33,9 +37,18 @@ public class CorriereAdapter extends RecyclerView.Adapter<CorriereAdapter.Corrie
     }
 
     @Override
-    public void onBindViewHolder(CorriereHolder holder, int position) {
-        String nomeCorriere = listaCorrieri.get(position).getUserCorriere();
+    public void onBindViewHolder(final CorriereHolder holder, int position) {
+        final String nomeCorriere = listaCorrieri.get(position).getUserCorriere();
         holder.tCorriere.setText(nomeCorriere);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(context, InsertPaccoActivity.class);
+                i.putExtra("corriereSelezionato",holder.tCorriere.getText().toString());
+                context.startActivity(i);
+            }
+        });
 
     }
 
@@ -46,6 +59,7 @@ public class CorriereAdapter extends RecyclerView.Adapter<CorriereAdapter.Corrie
 
     public class CorriereHolder extends RecyclerView.ViewHolder {
         private TextView tCorriere = itemView.findViewById(R.id.tCorriere);
+        private CardView cardView = itemView.findViewById(R.id.cardCorriere);
         public CorriereHolder(View itemView) {
             super(itemView);
 

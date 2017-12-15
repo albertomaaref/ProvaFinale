@@ -15,6 +15,8 @@ public class Cliente implements Serializable {
     private ArrayList<Corriere> corrieriDisp;
 
     public Cliente() {
+        pacchiCliente = new ArrayList<>();
+        corrieriDisp = new ArrayList<>();
     }
 
     public String getUserCliente() {

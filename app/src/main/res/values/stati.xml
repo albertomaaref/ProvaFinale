@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="stati">
+        <item>commissionato</item>
+        <item>in consegna</item>
+        <item>cosegnato</item>
+    </string-array>
+</resources>

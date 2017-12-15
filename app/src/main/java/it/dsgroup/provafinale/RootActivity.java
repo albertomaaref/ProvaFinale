@@ -7,12 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import it.dsgroup.provafinale.models.Cliente;
+import it.dsgroup.provafinale.models.Corriere;
+
 public class RootActivity extends AppCompatActivity {
 
     private SharedPreferences prefs;
 
     private String utenteAttivo;
     private String tipoUtenteAttivo;
+    private Cliente cliente;
+    private Corriere corriere;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +36,8 @@ public class RootActivity extends AppCompatActivity {
 
         else if (tipoUtenteAttivo.toLowerCase().equals("clienti")){
             // vado alla lista di visualizzazione dei corrieri disonibili
-            Toast.makeText(getApplicationContext(),"vado dalla lista dei corrieri",Toast.LENGTH_SHORT).show();
+            cliente = new Cliente();
+            cliente.setUserCliente(utenteAttivo);
             Intent i = new Intent(this,ListaCorrieriActivity.class);
             startActivity(i);
 

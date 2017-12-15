@@ -3,6 +3,7 @@ package it.dsgroup.provafinale;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.ArrayList;
-import java.util.prefs.PreferenceChangeEvent;
 
 import cz.msebera.android.httpclient.Header;
 import it.dsgroup.provafinale.adapters.PaccoAdapter;
@@ -22,41 +22,45 @@ import it.dsgroup.provafinale.utilities.InternalStorage;
 import it.dsgroup.provafinale.utilities.JasonParser;
 import it.dsgroup.provafinale.utilities.TaskCompletion;
 
-public class ListaPacchiActivity extends AppCompatActivity implements TaskCompletion{
+public class PacchiCommissionatiActivity extends AppCompatActivity implements TaskCompletion{
 
-    private RecyclerView recyclerPacco;
+    private RecyclerView rrecycleCommissionati;
     private LinearLayoutManager lm;
     private ProgressDialog pd;
-    private TaskCompletion delegation;
     private ArrayList<Pacco> listaPacchi;
+    private TaskCompletion delegation;
     private PaccoAdapter paccoAdapter;
     private SharedPreferences prefs;
     private String utenteAttivo;
+    private SwipeRefreshLayout refrechPacchi;
     private String tipoUtente;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lista_pacchi);
+        setContentView(R.layout.activity_pacchi_commissionati);
 
-        recyclerPacco = findViewById(R.id.recyclerPacchi);
+        refrechPacchi = findViewById(R.id.refrechPacchi);
+        rrecycleCommissionati = findViewById(R.id.recycleCommissionati);
         lm = new LinearLayoutManager(this);
-        listaPacchi = (ArrayList<Pacco>) InternalStorage.readObject(getApplicationContext(),"listaPacchi");
+        delegation=this;
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         utenteAttivo = (String) prefs.getString("utenteAttivo","");
         tipoUtente = (String) prefs.getString("tipoUtenteAttivo","");
-        delegation = this;
 
-
-        if (listaPacchi == null){
-            // rest calla per i pacchi
-            restCallPacchi(delegation,"users/corrieri/"+utenteAttivo+".json");
-
+        listaPacchi = (ArrayList<Pacco>) InternalStorage.readObject(getApplicationContext(),"listaCommissionati");
+        if (listaPacchi==null){
+            String url = "users/clienti/"+utenteAttivo+".json";
+            restCallCommissionati(delegation,url);
         }
         else {
             setRecyclerPacco();
         }
+
+        refrechPacchi.setOnRefreshListener(temporary3);
+
     }
 
     @Override
@@ -67,18 +71,18 @@ public class ListaPacchiActivity extends AppCompatActivity implements TaskComple
             Toast.makeText(getApplicationContext(),"Errore nel caricamento",Toast.LENGTH_SHORT).show();
         }
         else if (string.equals("success")){
+            InternalStorage.writeObject(getApplicationContext(),"listaCommissionati", listaPacchi);
             setRecyclerPacco();
         }
     }
 
-    public void setRecyclerPacco (){
+    private void setRecyclerPacco() {
         paccoAdapter = new PaccoAdapter(listaPacchi,this,tipoUtente);
-        recyclerPacco.setLayoutManager(lm);
-        recyclerPacco.setAdapter(paccoAdapter);
-
+        rrecycleCommissionati.setLayoutManager(lm);
+        rrecycleCommissionati.setAdapter(paccoAdapter);
     }
 
-    public void restCallPacchi (final TaskCompletion delegation, String url){
+    public void restCallCommissionati (final TaskCompletion delegation, String url){
         pd = new ProgressDialog(this);
         pd.show();
         FireBaseConnection.get(url, null, new AsyncHttpResponseHandler() {
@@ -89,15 +93,23 @@ public class ListaPacchiActivity extends AppCompatActivity implements TaskComple
                     delegation.taskToDo("error");
                 }
                 else {
-                    listaPacchi = (ArrayList<Pacco>) JasonParser.getPacchi(s);
+                    listaPacchi = JasonParser.getPacchi(s);
                     delegation.taskToDo("success");
                 }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    delegation.taskToDo("error");
+                delegation.taskToDo("error");
             }
         });
     }
+
+    SwipeRefreshLayout.OnRefreshListener temporary3 = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            refrechPacchi.setRefreshing(false);
+            restCallCommissionati(delegation,"users/clienti/"+utenteAttivo+".json");
+        }
+    };
 }

@@ -1,10 +1,14 @@
 package it.dsgroup.provafinale;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 import it.dsgroup.provafinale.adapters.CorriereAdapter;
 import it.dsgroup.provafinale.models.Corriere;
+import it.dsgroup.provafinale.models.Pacco;
 import it.dsgroup.provafinale.utilities.FireBaseConnection;
 import it.dsgroup.provafinale.utilities.InternalStorage;
 import it.dsgroup.provafinale.utilities.JasonParser;
@@ -27,13 +32,18 @@ public class ListaCorrieriActivity extends AppCompatActivity implements TaskComp
     private ArrayList<Corriere> listaCorrieri;
     private TaskCompletion delegation;
     private ProgressDialog pd;
+    private Button bCommissionati;
+    private SwipeRefreshLayout sw;
+    private ArrayList<Pacco> listaPacchi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_corrieri);
 
+        bCommissionati = findViewById(R.id.bCommissionati);
         recyclerCorriere = findViewById(R.id.recyclerCorriere);
+        sw = findViewById(R.id.refrechCorrieri);
         lm = new LinearLayoutManager(this);
         listaCorrieri= (ArrayList<Corriere>) InternalStorage.readObject(getApplicationContext(),"listaCorrieri");
         delegation = this;
@@ -46,6 +56,16 @@ public class ListaCorrieriActivity extends AppCompatActivity implements TaskComp
         else {
             setRecyclerCorriere();
         }
+
+        bCommissionati.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ListaCorrieriActivity.this,PacchiCommissionatiActivity.class);
+                startActivity(i);
+            }
+        });
+
+        sw.setOnRefreshListener(temporary);
 
 
     }
@@ -92,4 +112,12 @@ public class ListaCorrieriActivity extends AppCompatActivity implements TaskComp
             }
         });
     }
+
+    SwipeRefreshLayout.OnRefreshListener temporary = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            restCallCorrieri("users/corrieri.json", delegation);
+            sw.setRefreshing(false);
+        }
+    };
 }

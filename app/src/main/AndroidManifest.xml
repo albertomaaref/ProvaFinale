@@ -22,7 +22,13 @@
         <activity android:name=".CreateAccountActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".ListaCorrieriActivity" />
-        <activity android:name=".ListaPacchiActivity"></activity>
+        <activity android:name=".ListaPacchiActivity" />
+        <activity android:name=".PacchiCommissionatiActivity" />
+        <activity android:name=".InsertPaccoActivity" />
+
+        <service android:name=".services.PushNotification" />
+
+        <activity android:name=".GestioneConsegnaActivity"></activity>
     </application>
 
 </manifest>

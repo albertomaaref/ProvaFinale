@@ -17,6 +17,16 @@ public class Pacco implements Serializable{
     private String indDep;
     private String indCons;
 
+    public String getDimensione() {
+        return dimensione;
+    }
+
+    public void setDimensione(String dimensione) {
+        this.dimensione = dimensione;
+    }
+
+    private String dimensione;
+
     public Pacco() {
     }
 

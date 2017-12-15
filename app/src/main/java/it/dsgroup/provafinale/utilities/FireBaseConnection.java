@@ -1,6 +1,8 @@
 package it.dsgroup.provafinale.utilities;
 import com.loopj.android.http.*;
 
+import it.dsgroup.provafinale.models.Pacco;
+
 /**
  * Created by utente9.academy on 14/12/2017.
  */
@@ -22,4 +24,5 @@ public final class FireBaseConnection {
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
+
 }
