@@ -21,6 +21,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import it.dsgroup.provafinale.ListaPacchiActivity;
 import it.dsgroup.provafinale.R;
+import it.dsgroup.provafinale.models.Pacco;
+import it.dsgroup.provafinale.utilities.InternalStorage;
 
 /**
  * Created by utente9.academy on 15/12/2017.
@@ -28,10 +30,13 @@ import it.dsgroup.provafinale.R;
 
 public class PushNotification extends Service {
 
-    private DatabaseReference ref;
+    private DatabaseReference refInsert;
+    private DatabaseReference refStato;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private ChildEventListener child1;
     private SharedPreferences preferences;
+    private Pacco paccoInConsegna;
+    private ChildEventListener child2;
 
 
     @Nullable
@@ -45,7 +50,12 @@ public class PushNotification extends Service {
         super.onCreate();
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String corriereCommissionato = preferences.getString("corriereCommissionato","");
-        ref = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/corrieri/"+corriereCommissionato);
+        refInsert = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/corrieri/"+corriereCommissionato);
+
+        paccoInConsegna = (Pacco) InternalStorage.readObject(getApplicationContext(),"paccoInConsegna");
+        refStato = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/clienti/"+paccoInConsegna.getDestinatario());
+
+
 
         child1 = new ChildEventListener() {
             @Override
@@ -74,7 +84,36 @@ public class PushNotification extends Service {
             }
         };
 
-        ref.addChildEventListener(child1);
+        child2 = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                pushValidation("pacco "+paccoInConsegna.getIdPacco().toString()+" in consegna");
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                pushValidation("pacco "+paccoInConsegna.getIdPacco().toString()+" in consegna");
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+
+        refStato.addChildEventListener(child2);
+        refInsert.addChildEventListener(child1);
     }
 
     @Override

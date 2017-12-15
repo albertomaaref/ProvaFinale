@@ -3,7 +3,10 @@ package it.dsgroup.provafinale.utilities;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.WeakHashMap;
 
@@ -92,5 +95,54 @@ public final class JasonParser {
         }
 
         return listPacchi;
+    }
+
+    public static Pacco getPaccoById(String url){
+        Pacco pacco = new Pacco();
+
+        try {
+            JSONObject object = new JSONObject(url);
+            Iterator keys = object.keys();
+            while (keys.hasNext()){
+                String key = (String) keys.next();
+                if (key.toLowerCase().equals("deposito")) pacco.setDeposito(object.getString(key));
+                if (key.toLowerCase().equals("destinatario")) pacco.setDestinatario(object.getString(key));
+                if (key.toLowerCase().equals("dimensione")) pacco.setDimensione(object.getString(key));
+                if (key.toLowerCase().equals("idpacco")) pacco.setIdPacco(object.getString(key));
+                if (key.toLowerCase().equals("indcons")) pacco.setIndCons(object.getString(key));
+                if (key.toLowerCase().equals("stato")) pacco.setStato(object.getString(key));
+                if (key.toLowerCase().equals("dataconsegna")){
+
+                        String data="" ;
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        Date dataConsegna = new Date();
+                        JSONObject oggetto = object.getJSONObject(key);
+                        Iterator chiavi = oggetto.keys();
+                        while (chiavi.hasNext()){
+                            String chiave = (String) chiavi.next();
+                            if (chiave.toLowerCase().equals("date")) data= oggetto.getString(chiave)+"/";
+                            if (chiave.toLowerCase().equals("month")) data = data+oggetto.getString(chiave)+"/";
+                            if (chiave.toLowerCase().equals("year")) data = data+oggetto.getString(chiave)+"/";
+                        }
+                        try {
+                            dataConsegna = dateFormat.parse(data);
+                            pacco.setDataConsegna(dataConsegna);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+
+                        }
+
+                }
+            }
+
+        }
+
+        catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return pacco;
+
     }
 }
