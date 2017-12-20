@@ -78,7 +78,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             corriere.setUserCorriere(user.getText().toString());
             corriere.setPassCorriere(password.getText().toString());
             ref.child("users/corrieri/"+corriere.getUserCorriere()+"/password").setValue(corriere.getPassCorriere());
-            Intent i = new Intent(CreateAccountActivity.this,PacchiCommissionatiActivity.class);
+            Intent i = new Intent(CreateAccountActivity.this,LoginActivity.class);
             startActivity(i);
         }
     }
