@@ -35,7 +35,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         spinner = findViewById(R.id.spinnerRegistrati);
         vai = findViewById(R.id.bVai);
         database = FirebaseDatabase.getInstance();
-        ref = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/");
+        ref = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/");
 
         vai.setOnClickListener(temporary7);
 

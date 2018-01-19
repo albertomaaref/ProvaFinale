@@ -9,7 +9,7 @@ import it.dsgroup.provafinale.models.Pacco;
 
 public final class FireBaseConnection {
 
-    private static final String BASE_URL = "https://provafinale-5bc57.firebaseio.com/";
+    private static final String BASE_URL = "https://provafinale-733e5.firebaseio.com/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 

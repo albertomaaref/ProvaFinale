@@ -56,7 +56,7 @@ public class DettaglioPaccoActivity extends AppCompatActivity implements TaskCom
         corriere = findViewById(R.id.tdCorriere);
         stato = findViewById(R.id.tdStato);
         database = FirebaseDatabase.getInstance();
-        ref = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/");
+        ref = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/");
         radioConsegnato = findViewById(R.id.radioConsegnato);
         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         tipoUtente = pref.getString("tipoUtenteAttivo","");

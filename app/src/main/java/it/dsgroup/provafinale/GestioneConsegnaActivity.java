@@ -48,7 +48,7 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
         bApplica = findViewById(R.id.bApplica);
         delegation = this;
         database = FirebaseDatabase.getInstance();
-        ref =database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/");
+        ref =database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/");
 
         restCallforPacco(delegation,"users/pacchi/"+idPacco+".json");
         bApplica.setOnClickListener(temporary4);

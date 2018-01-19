@@ -60,7 +60,7 @@ public class InsertPaccoActivity extends AppCompatActivity {
         Intent i = getIntent();
         corriereCommissionato = i.getStringExtra("corriereSelezionato");
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/");
+        databaseReference = firebaseDatabase.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/");
 
         controllaAddress = findViewById(R.id.bControllaIndirizzo);
         insert = findViewById(R.id.bInsertPacco);
@@ -116,7 +116,7 @@ public class InsertPaccoActivity extends AppCompatActivity {
     View.OnClickListener temporary9 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //new GetCoordinates().execute(partenza.getText().toString().replace(" ","+"));
+            new GetCoordinates().execute(partenza.getText().toString().replace(" ","+"));
             Intent i = new Intent(InsertPaccoActivity.this,MapsActivity.class);
             startActivity(i);
         }

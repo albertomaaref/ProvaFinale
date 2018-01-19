@@ -51,7 +51,7 @@ public class PushNotification extends Service {
         super.onCreate();
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String corriereCommissionato = preferences.getString("corriereCommissionato","");
-        refInsert = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/corrieri/"+corriereCommissionato);
+        refInsert = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/users/corrieri/"+corriereCommissionato);
         if (paccoInConsegna!=null){
 
         }
@@ -118,7 +118,7 @@ public class PushNotification extends Service {
 
 
         if (paccoInConsegna!=null){
-            refStato = database.getReferenceFromUrl("https://provafinale-5bc57.firebaseio.com/users/clienti/"+paccoInConsegna.getDestinatario());
+            refStato = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/users/clienti/"+paccoInConsegna.getDestinatario());
             refStato.addChildEventListener(child2);
         }
 
