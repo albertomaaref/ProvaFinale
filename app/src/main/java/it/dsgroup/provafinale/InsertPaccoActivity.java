@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,32 +83,39 @@ public class InsertPaccoActivity extends AppCompatActivity {
     View.OnClickListener temporary = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!controllaDati()){
-                Toast.makeText(getApplicationContext(),"Si Prega di Controllare i dati inseriti",Toast.LENGTH_SHORT).show();
-            }
-            else {
-                pacco = new Pacco();
-                pacco.setDataConsegna(dataConsegna);
-                pacco.setIdPacco(idPacco.getText().toString());
-                pacco.setDeposito(deposito.getText().toString());
-                pacco.setStato("commissionato");
-                pacco.setIndCons(destinazione.getText().toString());
-                pacco.setDimensione(dimensione.getText().toString());
-                pacco.setIndCons(partenza.getText().toString());
-                pacco.setDestinatario(utenteAttivo);
-                pacco.setCorriere(corriereCommissionato);
+            try {
+                if (!controllaDati()){
+                    Toast.makeText(getApplicationContext(),"Si Prega di Controllare i dati inseriti",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    pacco = new Pacco();
+                    pacco.setDataConsegna(dataConsegna);
+                    pacco.setIdPacco(idPacco.getText().toString());
+                    pacco.setDeposito(deposito.getText().toString());
+                    pacco.setStato("commissionato");
+                    pacco.setIndCons(destinazione.getText().toString());
+                    pacco.setDimensione(dimensione.getText().toString());
+                    pacco.setIndDep(partenza.getText().toString());
+                    pacco.setDestinatario(utenteAttivo);
+                    pacco.setCorriere(corriereCommissionato);
+
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("corriereCommissionato",pacco.getCorriere());
+                    editor.commit();
 
 
+                    insertPaccoInDB(pacco);
+
+                    Intent i = new Intent(InsertPaccoActivity.this,PacchiCommissionatiActivity.class);
+                    //Intent intentPush= new Intent(InsertPaccoActivity.this, PushNotification.class);
+                    //startService(intentPush);
+                    startActivity(i);
+                    finish();
 
 
-                insertPaccoInDB(pacco);
-
-                Intent i = new Intent(InsertPaccoActivity.this,PacchiCommissionatiActivity.class);
-                Intent intentPush= new Intent(InsertPaccoActivity.this, PushNotification.class);
-                startService(intentPush);
-                startActivity(i);
-
-
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
         }
@@ -117,20 +125,23 @@ public class InsertPaccoActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             new GetCoordinates().execute(partenza.getText().toString().replace(" ","+"));
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("adressA",partenza.getText().toString());
+            editor.putString("adressB",destinazione.getText().toString());
+            editor.commit();
+
             Intent i = new Intent(InsertPaccoActivity.this,MapsActivity.class);
             startActivity(i);
         }
     };
 
-    public boolean controllaDati(){
+    public boolean controllaDati() throws ParseException {
         dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dataConsegna = new Date();
-        try {
-            dataConsegna = dateFormat.parse(data.getText().toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return false;
-        }
+        String s = data.getText().toString();
+        Log.i("s",""+s);
+        dataConsegna = dateFormat.parse(s);
+        Log.i("dataConsegna",""+dataConsegna);
 
         if (idPacco.getText().toString().equals("")||destinazione.getText().toString().equals("")||
                 deposito.getText().toString().equals("")|| dimensione.getText().toString().equals("")||partenza.getText().toString().equals("")){
@@ -141,9 +152,15 @@ public class InsertPaccoActivity extends AppCompatActivity {
     }
 
     private void insertPaccoInDB(Pacco pacco){
-        databaseReference.child("users/corrieri/"+corriereCommissionato+"/pacchi/"+pacco.getIdPacco()+"/id").setValue(pacco.getIdPacco());
+        databaseReference.child("users/corrieri/"+corriereCommissionato+"/pacchi/"+pacco.getIdPacco()+"/idPacco").setValue(pacco.getIdPacco());
         databaseReference.child("users/pacchi/"+pacco.getIdPacco()).setValue(pacco);
-        databaseReference.child("users/clienti/"+utenteAttivo+"/pacchi/"+pacco.getIdPacco()+"/id").setValue(pacco.getIdPacco());
+        databaseReference.child("users/pacchi/"+pacco.getIdPacco()+"/dataConsegna").setValue(dataConsegna.toString());
+        /*
+        databaseReference.child("users/pacchi/"+pacco.getIdPacco()+"/dataConsegna/date").setValue(pacco.getDataConsegna().getDate());
+        databaseReference.child("users/pacchi/"+pacco.getIdPacco()+"/dataConsegna/month").setValue(pacco.getDataConsegna().getMonth());
+        databaseReference.child("users/pacchi/"+pacco.getIdPacco()+"/dataConsegna/year").setValue(pacco.getDataConsegna().getYear());
+        */
+        databaseReference.child("users/clienti/"+utenteAttivo+"/pacchi/"+pacco.getIdPacco()+"/idPacco").setValue(pacco.getIdPacco());
     }
 
     public class GetCoordinates extends AsyncTask<String,Void,String>{

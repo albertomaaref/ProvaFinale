@@ -17,6 +17,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import cz.msebera.android.httpclient.Header;
 import it.dsgroup.provafinale.adapters.PaccoAdapter;
 import it.dsgroup.provafinale.models.Pacco;
+import it.dsgroup.provafinale.models.Session;
 import it.dsgroup.provafinale.utilities.FireBaseConnection;
 import it.dsgroup.provafinale.utilities.InternalStorage;
 import it.dsgroup.provafinale.utilities.JasonParser;
@@ -72,9 +73,15 @@ public class ListaPacchiActivity extends AppCompatActivity implements TaskComple
     }
 
     public void setRecyclerPacco (){
-        paccoAdapter = new PaccoAdapter(listaPacchi,this,tipoUtente);
-        recyclerPacco.setLayoutManager(lm);
-        recyclerPacco.setAdapter(paccoAdapter);
+        if (listaPacchi.size()==0){
+            Toast.makeText(getApplicationContext(),"NO PACKS TO DELIVERY",Toast.LENGTH_LONG).show();
+        }
+        else {
+            paccoAdapter = new PaccoAdapter(listaPacchi,this,tipoUtente);
+            recyclerPacco.setLayoutManager(lm);
+            recyclerPacco.setAdapter(paccoAdapter);
+        }
+
 
     }
 
@@ -99,5 +106,11 @@ public class ListaPacchiActivity extends AppCompatActivity implements TaskComple
                     delegation.taskToDo("error");
             }
         });
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Session.logout(getApplicationContext());
     }
 }

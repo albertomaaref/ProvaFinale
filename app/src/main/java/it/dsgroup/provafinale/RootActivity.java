@@ -40,19 +40,20 @@ public class RootActivity extends AppCompatActivity {
             cliente = new Cliente();
             cliente.setUserCliente(utenteAttivo);
             Intent i = new Intent(this,ListaCorrieriActivity.class);
-            Intent intentPush= new Intent(RootActivity.this, PushNotification.class);
-            startService(intentPush);
             startActivity(i);
 
         }
 
         else if (tipoUtenteAttivo.toLowerCase().equals("corrieri")){
             // vao alla lista dei pacchi
-            Toast.makeText(getApplicationContext(),"vado dalla lista dei pacchi",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(),"vado dalla lista dei pacchi",Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this,ListaPacchiActivity.class);
             startActivity(i);
 
         }
+
+        Intent intentPush= new Intent(RootActivity.this, PushNotification.class);
+        startService(intentPush);
 
         finish();
     }

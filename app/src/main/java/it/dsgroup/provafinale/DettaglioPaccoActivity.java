@@ -17,6 +17,10 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import cz.msebera.android.httpclient.Header;
 import it.dsgroup.provafinale.models.Pacco;
 import it.dsgroup.provafinale.utilities.FireBaseConnection;
@@ -94,14 +98,16 @@ public class DettaglioPaccoActivity extends AppCompatActivity implements TaskCom
             id.setText(idPacco);
             dimensione.setText(pacco.getDimensione());
             stato.setText(pacco.getStato());
-            dataConsegna.setText(pacco.getDataConsegna().toString());
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            dataConsegna.setText(format.format(pacco.getDataConsegna()));
+            corriere.setText(pacco.getCorriere().toString());
             if (pacco.getStato().toLowerCase().equals("consegnato")){
                 radioConsegnato.setEnabled(false);}
 
         }
     }
 
-    public void restCallDettaglioPacco(TaskCompletion delegation, String url){
+    public void restCallDettaglioPacco(final TaskCompletion delegation, String url){
         pd = new ProgressDialog(this);
         pd.show();
         FireBaseConnection.get(url, null, new AsyncHttpResponseHandler() {
@@ -109,11 +115,11 @@ public class DettaglioPaccoActivity extends AppCompatActivity implements TaskCom
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String s = new String(responseBody);
                 if (s.equals("null")){
-                    taskToDo("error");
+                    delegation.taskToDo("error");
                 }
                 else {
                     pacco = JasonParser.getPaccoById(s);
-                    taskToDo("success");
+                    delegation.taskToDo("success");
                 }
             }
 

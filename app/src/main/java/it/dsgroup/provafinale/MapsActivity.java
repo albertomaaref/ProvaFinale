@@ -1,9 +1,13 @@
 package it.dsgroup.provafinale;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.directions.route.AbstractRouting;
@@ -11,11 +15,14 @@ import com.directions.route.Route;
 import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -25,10 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import it.dsgroup.provafinale.models.Pacco;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
 
     private GoogleMap mMap;
     private List<Polyline> polylines;
+    private SharedPreferences sp;
+    private Pacco pacco;
 
 
 
@@ -42,6 +53,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         polylines = new ArrayList<>();
+        sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+
     }
 
 
@@ -59,15 +73,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-        LatLng milano = new LatLng(45.4652317, 9.1876072);
+        //LatLng milano = new LatLng(45.4652317, 9.1876072);
 
         // Add a marker in Sydney and move the camera
-        LatLng positionA = geocoding("via meda, milano");
-        mMap.addMarker(new MarkerOptions().position(positionA).title("inizio"));
+        LatLng positionA = geocoding(sp.getString("adressA","").toString());
+        MarkerOptions markerA = new MarkerOptions().position(positionA).title("inizio");
+        Marker mA = mMap.addMarker(markerA);
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionA,15));
-        LatLng positionB = geocoding("via pompeo mariani, milano");
-        mMap.addMarker(new MarkerOptions().position(positionB).title("inizio"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(milano,12));
+
+
+        LatLng positionB = geocoding(sp.getString("adressB","").toString());
+        MarkerOptions markerB = new MarkerOptions().position(positionB).title("fine");
+        Marker mB = mMap.addMarker(markerB);
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(mA.getPosition());
+        builder.include(mB.getPosition());
+        LatLngBounds bounds = builder.build();
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds,150);
+        mMap.animateCamera(cu);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(milano,12));
 
         // routing
 
@@ -100,13 +125,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try {
 
-            addresses = geocoder.getFromLocationName(indirizzo + "Milano", 1);
+            addresses = geocoder.getFromLocationName(indirizzo , 1);
+            Log.i("adress",addresses.toString());
+            if (addresses.size()!= 0 ){
+                double latitude =  addresses.get(0).getLatitude();
 
-            double latitude =  addresses.get(0).getLatitude();
+                double longitude =  addresses.get(0).getLongitude();
 
-            double longitude =  addresses.get(0).getLongitude();
+                return new LatLng(latitude,longitude);
+            }
 
-            return new LatLng(latitude,longitude);
 
 
 
@@ -187,5 +215,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onRoutingCancelled() {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

@@ -19,11 +19,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import it.dsgroup.provafinale.ListaPacchiActivity;
+import org.json.JSONObject;
+
 import it.dsgroup.provafinale.LoginActivity;
 import it.dsgroup.provafinale.R;
 import it.dsgroup.provafinale.models.Pacco;
-import it.dsgroup.provafinale.utilities.InternalStorage;
+import it.dsgroup.provafinale.utilities.JasonParser;
 
 /**
  * Created by utente9.academy on 15/12/2017.
@@ -38,6 +39,8 @@ public class PushNotification extends Service {
     private SharedPreferences preferences;
     private Pacco paccoInConsegna;
     private ChildEventListener child2;
+    private String utenteAttivo;
+    private String tipoUtenteAttivo;
 
 
     @Nullable
@@ -50,27 +53,33 @@ public class PushNotification extends Service {
     public void onCreate() {
         super.onCreate();
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String corriereCommissionato = preferences.getString("corriereCommissionato","");
-        refInsert = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/users/corrieri/"+corriereCommissionato);
-        if (paccoInConsegna!=null){
-
-        }
-
-        paccoInConsegna = (Pacco) InternalStorage.readObject(getApplicationContext(),"paccoInConsegna");
+        tipoUtenteAttivo = preferences.getString("tipoUtenteAttivo", "");
 
 
 
+        utenteAttivo = preferences.getString("utenteAttivo", "");
 
 
         child1 = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                pushValidation("nuovo pacco");
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    //Pacco pacco = userSnapshot.getValue(Pacco.class);
+                    //if (pacco.getStato()!=null && pacco.getStato().equals("in consegna")) {
+                        //pushValidation(utenteAttivo + " : pacco da consegnare con id " + pacco.getIdPacco());
+                    //}
+                }
+
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                pushValidation("nuovo pacco");
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    //Pacco pacco = userSnapshot.getValue(Pacco.class);
+                    //if (pacco.getStato()!=null && pacco.getStato().equals("in consegna")) {
+                      //  pushValidation(utenteAttivo + " : pacco da consegnare con id " + pacco.getIdPacco());
+                    //}
+                }
             }
 
             @Override
@@ -92,12 +101,17 @@ public class PushNotification extends Service {
         child2 = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                pushValidation("pacco "+paccoInConsegna.getIdPacco().toString()+" in consegna");
+
+                String utente = preferences.getString("corriereCommissionato","");
+                if (utente.equals(utenteAttivo)){
+
+                    pushValidation("pacco " + dataSnapshot.getValue() + " commissionato");
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                pushValidation("pacco "+paccoInConsegna.getIdPacco().toString()+" in consegna");
+                pushValidation("pacco " + dataSnapshot.getValue() + " in consegna");
             }
 
             @Override
@@ -116,13 +130,10 @@ public class PushNotification extends Service {
             }
         };
 
-
-        if (paccoInConsegna!=null){
-            refStato = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/users/clienti/"+paccoInConsegna.getDestinatario());
-            refStato.addChildEventListener(child2);
-        }
-
+        refInsert = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/users/clienti");
+        refStato = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/users/corrieri");
         refInsert.addChildEventListener(child1);
+        refStato.addChildEventListener(child2);
     }
 
     @Override
@@ -135,9 +146,9 @@ public class PushNotification extends Service {
         super.onDestroy();
     }
 
-    public void pushValidation(String chiave){
+    public void pushValidation(String chiave) {
         Intent i = new Intent(this, LoginActivity.class);
-        sendNotificaton(i,"",chiave);
+        sendNotificaton(i, "", chiave);
     }
 
 

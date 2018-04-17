@@ -2,6 +2,8 @@ package it.dsgroup.provafinale;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +23,8 @@ import it.dsgroup.provafinale.utilities.InternalStorage;
 import it.dsgroup.provafinale.utilities.JasonParser;
 import it.dsgroup.provafinale.utilities.TaskCompletion;
 
-public class GestioneConsegnaActivity extends AppCompatActivity implements TaskCompletion{
+public class GestioneConsegnaActivity extends AppCompatActivity implements TaskCompletion {
 
-    private Spinner spinnerStato;
     private Button bApplica;
     private TaskCompletion delegation;
     private String idPacco;
@@ -32,8 +33,7 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
     private ProgressDialog pd;
     private Pacco paccoDaconsegnare;
     private Button dettaglioPacco;
-
-
+    private SharedPreferences pref;
 
 
     @Override
@@ -43,34 +43,31 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
 
         Intent i = getIntent();
         idPacco = i.getStringExtra("idPacco");
-        spinnerStato = findViewById(R.id.spinnerGestione);
         dettaglioPacco = findViewById(R.id.bDettaglio);
-        bApplica = findViewById(R.id.bApplica);
+        bApplica = findViewById(R.id.bSetInConsegna);
         delegation = this;
         database = FirebaseDatabase.getInstance();
-        ref =database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/");
+        ref = database.getReferenceFromUrl("https://provafinale-733e5.firebaseio.com/");
+        pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        restCallforPacco(delegation,"users/pacchi/"+idPacco+".json");
+        restCallforPacco(delegation, "users/pacchi/" + idPacco + ".json");
+
         bApplica.setOnClickListener(temporary4);
         dettaglioPacco.setOnClickListener(temporary5);
 
 
-
-
-
     }
 
-    public void restCallforPacco(final TaskCompletion delegation, String url){
+    public void restCallforPacco(final TaskCompletion delegation, String url) {
         pd = new ProgressDialog(this);
         pd.show();
         FireBaseConnection.get(url, null, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String s = new String(responseBody);
-                if (s.equals("null")){
+                if (s.equals("null")) {
                     delegation.taskToDo("error");
-                }
-                else {
+                } else {
                     paccoDaconsegnare = JasonParser.getPaccoById(s);
                     delegation.taskToDo("success");
                 }
@@ -87,50 +84,52 @@ public class GestioneConsegnaActivity extends AppCompatActivity implements TaskC
     public void taskToDo(String string) {
         pd.dismiss();
         pd.cancel();
+        if (string.equals("success")) {
+            if (paccoDaconsegnare.getStato().equals("consegnato")) {
+                bApplica.setEnabled(false);
+            }
+        }
     }
+
 
     View.OnClickListener temporary4 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!controlloSpinnerStato()){
-                Toast.makeText(GestioneConsegnaActivity.this,"corregere lo stato del  pacco",Toast.LENGTH_SHORT).show();
-            }
-            else {
-                paccoDaconsegnare.setStato(spinnerStato.getSelectedItem().toString());
-                Intent intentPush= new Intent(GestioneConsegnaActivity.this, PushNotification.class);
-                startService(intentPush);
-                setStatoinDB();
 
-            }
+            paccoDaconsegnare.setStato("in consegna");
+            //Intent intentPush = new Intent(GestioneConsegnaActivity.this, PushNotification.class);
+            //startService(intentPush);
+            setStatoinDB();
+
         }
+
     };
 
-    public boolean controlloSpinnerStato(){
-        if (spinnerStato.getSelectedItem().toString().toLowerCase().equals("in consegna")){
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
-    public void setStatoinDB (){
-        ref.child("users/pacchi/"+paccoDaconsegnare.getIdPacco()).setValue(paccoDaconsegnare);
-        ref.child("users/clienti/"+paccoDaconsegnare.getDestinatario()+"/pacchi/"+paccoDaconsegnare.getIdPacco()+"/id").setValue(paccoDaconsegnare.getIdPacco());
-        ref.child("users/clienti/"+paccoDaconsegnare.getDestinatario()+"/pacchi/"+paccoDaconsegnare.getIdPacco()+"/stato").setValue(paccoDaconsegnare.getStato());
+    public void setStatoinDB() {
+        ref.child("users/pacchi/" + paccoDaconsegnare.getIdPacco()+"/stato").setValue(paccoDaconsegnare.getStato());
+        ref.child("users/clienti/" + paccoDaconsegnare.getDestinatario() + "/pacchi/" + paccoDaconsegnare.getIdPacco() + "/id").setValue(paccoDaconsegnare.getIdPacco());
+        ref.child("users/clienti/" + paccoDaconsegnare.getDestinatario() + "/pacchi/" + paccoDaconsegnare.getIdPacco() + "/stato").setValue(paccoDaconsegnare.getStato());
 
         // metto il pacco in local storage per poterlo riprendere finche non ho finito la consegna
-        InternalStorage.writeObject(getApplicationContext(),"paccoInConsegna",paccoDaconsegnare);
+        InternalStorage.writeObject(getApplicationContext(), "paccoInConsegna", paccoDaconsegnare);
     }
 
     View.OnClickListener temporary5 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent i = new Intent(GestioneConsegnaActivity.this,DettaglioPaccoActivity.class);
-            i.putExtra("idPacco",paccoDaconsegnare.getIdPacco());
-            startActivity(i);
+            anteprimaItinerario();
 
         }
     };
+
+    private void anteprimaItinerario() {
+        Intent i = new Intent(GestioneConsegnaActivity.this, MapsActivity.class);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("adressA", paccoDaconsegnare.getIndDep().toString());
+        editor.putString("adressB", paccoDaconsegnare.getIndCons().toString());
+        editor.commit();
+        startActivity(i);
+    }
 
 }

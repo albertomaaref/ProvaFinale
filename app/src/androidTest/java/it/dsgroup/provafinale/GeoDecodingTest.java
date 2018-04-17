@@ -6,6 +6,10 @@ import android.util.Log;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import it.dsgroup.provafinale.utilities.HttpGeoDecoding;
 
 /**
@@ -28,5 +32,22 @@ public class GeoDecodingTest {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+    @Test
+    public void formatDate (){
+        String data = "29/07/2018";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
+        Date dataConsegna = new Date();
+        try {
+            dataConsegna = dateFormat.parse(data);
+        } catch (ParseException e) {
+            e.printStackTrace();
+
+
+        }
+        Log.i("day",""+data.substring(0,2));
+        Log.i("month",data.substring(3,5));
+        Log.i("year",data.substring(6,10));
+
     }
 }

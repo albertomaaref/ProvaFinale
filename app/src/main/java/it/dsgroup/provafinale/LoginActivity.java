@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import cz.msebera.android.httpclient.Header;
+import it.dsgroup.provafinale.services.PushNotification;
 import it.dsgroup.provafinale.utilities.FireBaseConnection;
 import it.dsgroup.provafinale.utilities.JasonParser;
 import it.dsgroup.provafinale.utilities.TaskCompletion;
@@ -108,12 +109,13 @@ public class LoginActivity extends AppCompatActivity implements TaskCompletion{
         }
 
         else {
-            if (string.equals(passLogin.getText().toString())){// ne caso corrisponda la password
+            if (string.equals(passLogin.getText().toString())){// nel caso corrisponda la password
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("utenteAttivo",userLogin.getText().toString());
                 editor.putString("tipoUtenteAttivo",spinnerLogin.getSelectedItem().toString());
                 editor.commit();
                 //Toast.makeText(getApplicationContext(),"LOGIN EFFETTUATO",Toast.LENGTH_SHORT).show();
+
                 if (spinnerLogin.getSelectedItem().toString().toLowerCase().equals("clienti")){
                     Intent i = new Intent(this, ListaCorrieriActivity.class);
                     startActivity(i);
@@ -141,5 +143,8 @@ public class LoginActivity extends AppCompatActivity implements TaskCompletion{
         return true;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

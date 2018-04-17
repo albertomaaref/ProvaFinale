@@ -2,6 +2,8 @@ package it.dsgroup.provafinale;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import cz.msebera.android.httpclient.Header;
 import it.dsgroup.provafinale.adapters.CorriereAdapter;
 import it.dsgroup.provafinale.models.Corriere;
 import it.dsgroup.provafinale.models.Pacco;
+import it.dsgroup.provafinale.models.Session;
 import it.dsgroup.provafinale.utilities.FireBaseConnection;
 import it.dsgroup.provafinale.utilities.InternalStorage;
 import it.dsgroup.provafinale.utilities.JasonParser;
@@ -35,6 +38,8 @@ public class ListaCorrieriActivity extends AppCompatActivity implements TaskComp
     private Button bCommissionati;
     private SwipeRefreshLayout sw;
     private ArrayList<Pacco> listaPacchi;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,4 +125,11 @@ public class ListaCorrieriActivity extends AppCompatActivity implements TaskComp
             sw.setRefreshing(false);
         }
     };
+
+
+    @Override
+    public void onBackPressed() {
+        Session.logout(getApplicationContext());
+
+    }
 }

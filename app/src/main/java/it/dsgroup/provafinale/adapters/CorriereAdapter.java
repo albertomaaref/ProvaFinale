@@ -39,13 +39,13 @@ public class CorriereAdapter extends RecyclerView.Adapter<CorriereAdapter.Corrie
     @Override
     public void onBindViewHolder(final CorriereHolder holder, int position) {
         final String nomeCorriere = listaCorrieri.get(position).getUserCorriere();
-        holder.tCorriere.setText(nomeCorriere);
+        holder.tCorriere.setText(nomeCorriere.toUpperCase());
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent i = new Intent(context, InsertPaccoActivity.class);
-                i.putExtra("corriereSelezionato",holder.tCorriere.getText().toString());
+                i.putExtra("corriereSelezionato",holder.tCorriere.getText().toString().toLowerCase());
                 context.startActivity(i);
             }
         });

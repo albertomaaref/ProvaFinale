@@ -82,4 +82,9 @@ public class CreateAccountActivity extends AppCompatActivity {
             startActivity(i);
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }
