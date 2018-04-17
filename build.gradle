@@ -26,3 +26,37 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task incrementVersionCode {
+    description = 'Increments the version code in the version.properties file'
+
+    doLast {
+        File versionPropsFile = file('C:\\Users\\alim\\AndroidStudioProjects\\ProvaFinale\\app\\src\\main\\res')
+
+        if (versionPropsFile.canRead()) {
+            def Properties versionProps = new Properties()
+
+            FileInputStream fis = null
+            fis = new FileInputStream(versionPropsFile)
+
+            println("ALIfis "+ fis.getProperties())
+
+            versionProps.load(fis)
+
+            println("ALIversioneProps "+versionProps)
+
+
+            def code = versionProps['versionCode'].toInteger() + 1
+
+
+
+            versionProps['versionCode'] = code.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
+            println "VERSION_CODE incremented to "+code
+
+            fis.close()
+        } else {
+            throw new GradleException("Could not read version.properties!")
+        }
+    }
+}
