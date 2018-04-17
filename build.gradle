@@ -31,7 +31,7 @@ task incrementVersionCode {
     description = 'Increments the version code in the version.properties file'
 
     doLast {
-        File versionPropsFile = file('C:\\Users\\alim\\AndroidStudioProjects\\ProvaFinale\\app\\src\\main\\res')
+        File versionPropsFile = file('C:\\Jenkins\\workspace\\provaFinale\\app\\src\\main\\res\\version.properties')
 
         if (versionPropsFile.canRead()) {
             def Properties versionProps = new Properties()
