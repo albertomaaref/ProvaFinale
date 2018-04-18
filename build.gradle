@@ -32,9 +32,10 @@ task incrementVersionCode << {
     sviluppo
     collaudo
     produzione
+    destinazione
 
     //doLast {
-    File versionPropsFile = file('C:\\Jenkins\\workspace\\prova01\\app\\src\\main\\res\\version.properties')
+    File versionPropsFile = file(destinazione+'\\app\\src\\main\\res\\version.properties')
 
     if (versionPropsFile.canRead()) {
         def Properties versionProps = new Properties()
