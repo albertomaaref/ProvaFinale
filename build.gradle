@@ -1,14 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+
     repositories {
         google()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
-        
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,36 +26,68 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-task incrementVersionCode {
+task incrementVersionCode << {
     description = 'Increments the version code in the version.properties file'
 
-    doLast {
-        File versionPropsFile = file('C:\\Jenkins\\workspace\\provaFinale\\app\\src\\main\\res\\version.properties')
+    sviluppo
+    collaudo
+    produzione
 
-        if (versionPropsFile.canRead()) {
-            def Properties versionProps = new Properties()
+    //doLast {
+    File versionPropsFile = file('C:\\Users\\alim\\AndroidStudioProjects\\ProvaFinale\\app\\src\\main\\res\\version.properties')
 
-            FileInputStream fis = null
-            fis = new FileInputStream(versionPropsFile)
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
 
-            println("ALIfis "+ fis.getProperties())
+        FileInputStream fis = null
+        fis = new FileInputStream(versionPropsFile)
 
-            versionProps.load(fis)
+        println("ALIfis " + fis.getProperties())
 
-            println("ALIversioneProps "+versionProps)
+        versionProps.load(fis)
 
-
-            def code = versionProps['versionCode'].toInteger() + 1
-
+        println("ALIversioneProps " + versionProps)
 
 
-            versionProps['versionCode'] = code.toString()
-            versionProps.store(versionPropsFile.newWriter(), null)
-            println "VERSION_CODE incremented to "+code
-
-            fis.close()
-        } else {
-            throw new GradleException("Could not read version.properties!")
+        def code = versionProps['versionCode'].toInteger() + 1
+        def name = versionProps['versionName'].toString()
+        def nameVersion = name[0].toInteger()
+        def nameProduction = name[2].toInteger()
+        def nameCollaudo = name[4].toInteger()
+        def nameSviluppo = name[6].toInteger()
+        println('sviluppo: ' + sviluppo)
+        if (sviluppo.equals("true")) {
+            println('nameSviluppoBEFORE = ' + nameSviluppo)
+            nameSviluppo = nameSviluppo + 1
+            println('nameSviluppoAFTER = ' + nameSviluppo)
         }
+        if (collaudo.equals("true")) {
+            println('collaudo: ' + collaudo)
+            println('nameCollaudoBEFORE = ' + nameCollaudo)
+            nameCollaudo = nameCollaudo + 1
+            println('nameCollaudoAFTER = ' + nameCollaudo)
+        }
+        if (produzione.equals("true")) {
+            println('produzione: ' + produzione)
+            println('nameProduzioneBEFORE = ' + nameProduction)
+            nameProduction = nameProduction + 1
+            println('nameProduzioneAFTER = ' + nameProduction)
+
+        }
+        name = (nameVersion.toString() + "." + nameProduction.toString() + "." + nameCollaudo.toString() + "." + nameSviluppo.toString())
+        println(name)
+        //println(nameCollaudo)
+        //println(nameSviluppo)
+
+
+        versionProps['versionCode'] = code.toString()
+        versionProps['versionName'] = name
+        versionProps.store(versionPropsFile.newWriter(), null)
+        println "VERSION_CODE incremented to " + code
+
+        fis.close()
+    } else {
+        throw new GradleException("Could not read version.properties!")
     }
+    // }
 }
