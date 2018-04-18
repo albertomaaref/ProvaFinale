@@ -65,6 +65,7 @@ public final class JasonParser {
         try {
             JSONObject object = new JSONObject(url);
             Iterator keys = object.keys();
+
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 JSONObject oggetto = object.getJSONObject(key);
